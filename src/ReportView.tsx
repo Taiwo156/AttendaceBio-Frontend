@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Download } from 'lucide-react';
+import { API_BASE_URL } from './config';
 
 interface ReportRow {
   employeeId: string;
@@ -27,7 +28,7 @@ export default function ReportView() {
   const fetchReport = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/api/attendance/report', { params: { from, to } });
+      const res = await axios.get(`${API_BASE_URL}/api/attendance/report`, { params: { from, to } });
       setRows(res.data);
     } finally {
       setLoading(false);
