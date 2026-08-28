@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Exclude builds
+DEPLOY_IIS.md
+.env.production 
+web.config

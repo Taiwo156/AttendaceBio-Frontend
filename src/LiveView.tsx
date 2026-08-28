@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 import { Users, Clock, UserX, Calendar } from 'lucide-react';
+import { API_BASE_URL } from './config';
 
 interface StatusEvent {
   employeeId: string;
   employeeName: string;
   department: string;
   status: 'in' | 'out' | 'late';
-  timestamp: string;
+  clockinTime?: string;
+  clockoutTime?: string;
+  overTime?: number;
 }
 
 function initials(name: string) {
@@ -25,7 +28,7 @@ export default function LiveView() {
 
   const loadCurrentStatus = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/attendance/current-status');
+      const res = await axios.get(`${API_BASE_URL}/api/attendance/current-status`);
 
       if (res.data && res.data.events) {
         setEvents(res.data.events.slice().reverse());
@@ -46,7 +49,7 @@ export default function LiveView() {
   useEffect(() => {
     loadCurrentStatus();
 
-    const socket: Socket = io('http://localhost:3000/attendance', { transports: ['websocket'] });
+    const socket: Socket = io(`${API_BASE_URL}/attendance`, { transports: ['websocket'] });
     socket.on('connect', () => {
       setConnected(true);
       socket.emit('join_site', { siteId: 'site-1', token: 'test-token' });
@@ -93,12 +96,14 @@ export default function LiveView() {
               <th>Employee</th>
               <th>Department</th>
               <th>Status</th>
-              <th>Punch Time</th>
+              <th>ClockIn Time</th>
+              <th>ClockOut Time</th>
+              <th>Over Time</th>
             </tr>
           </thead>
           <tbody>
             {events.length === 0 && (
-              <tr><td colSpan={4} style={{ color: '#64748b' }}>Waiting for punches…</td></tr>
+              <tr><td colSpan={6} style={{ color: '#64748b' }}>Waiting for punches…</td></tr>
             )}
             {events.map((e, i) => (
               <tr key={i}>
@@ -108,7 +113,9 @@ export default function LiveView() {
                 </td>
                 <td>{e.department}</td>
                 <td><span className={`badge ${e.status === 'in' ? 'badge-in' : 'badge-out'}`}>{e.status === 'in' ? 'Checked In' : 'Checked Out'}</span></td>
-                <td>{new Date(e.timestamp).toLocaleTimeString()}</td>
+                <td>{e.clockinTime ? new Date(e.clockinTime).toLocaleTimeString() : '—'}</td>
+                <td>{e.clockoutTime ? new Date(e.clockoutTime).toLocaleTimeString() : '—'}</td>
+                <td>{e.overTime !== undefined ? `${e.overTime} hrs` : '—'}</td>
               </tr>
             ))}
           </tbody>

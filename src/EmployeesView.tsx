@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from './config';
 
 interface Employee {
   employeeId: string;
@@ -18,7 +19,7 @@ export default function EmployeesView() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/attendance/employees').then((res) => setEmployees(res.data));
+    axios.get(`${API_BASE_URL}/api/attendance/employees`).then((res) => setEmployees(res.data));
   }, []);
 
   const filtered = employees.filter((e) => e.name.toLowerCase().includes(search.toLowerCase()));
