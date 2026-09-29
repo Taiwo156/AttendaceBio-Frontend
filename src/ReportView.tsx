@@ -13,6 +13,13 @@ interface ReportRow {
   punchCount: number;
 }
 
+interface AttendanceReportResponse {
+  status: string;
+  code: string | null;
+  message: string;
+  data: ReportRow[] | null;
+}
+
 export default function ReportView() {
   const today = new Date();
   const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -28,8 +35,8 @@ export default function ReportView() {
   const fetchReport = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/attendance/report`, { params: { from, to } });
-      setRows(res.data);
+      const res = await axios.get<AttendanceReportResponse>(`${API_BASE_URL}/api/attendance/report`, { params: { from, to } });
+      setRows(res.data.data || []);
     } finally {
       setLoading(false);
       setLoaded(true);

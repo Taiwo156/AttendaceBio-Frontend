@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import { Radio, BarChart3, Users, Settings, Bell } from 'lucide-react';
+import { Radio, BarChart3, Users, Settings, Bell, HardDrive } from 'lucide-react';
 import './Layout.css';
 
 interface LayoutProps {
-  activeTab: 'live' | 'report' | 'employees';
-  onTabChange: (tab: 'live' | 'report' | 'employees') => void;
+  activeTab: 'live' | 'report' | 'employees' | 'devices';
+  onTabChange: (tab: 'live' | 'report' | 'employees' | 'devices') => void;
   children: ReactNode;
   title: string;
 }
@@ -27,6 +27,9 @@ export default function Layout({ activeTab, onTabChange, children, title }: Layo
           </button>
           <button className={`nav-item ${activeTab === 'employees' ? 'active' : ''}`} onClick={() => onTabChange('employees')}>
             <Users size={18} /> Employees
+          </button>
+          <button className={`nav-item ${activeTab === 'devices' ? 'active' : ''}`} onClick={() => onTabChange('devices')}>
+            <HardDrive size={18} /> Devices
           </button>
           <button className="nav-item" disabled>
             <Settings size={18} /> Settings
